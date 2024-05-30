@@ -1,9 +1,12 @@
 #include "libio.h"
 
-char* CreateMainPath(const char* path, const char* filename) {
-  char finalPath[500];
-  strcpy(finalPath, path);
-  return strcat(finalPath, filename);
+char* CreateMainPath(const char* base, const char* filename) {
+    size_t len = strlen(base) + strlen(filename) + 2;  // +1 for the separator, +1 for the null terminator
+    char* path = malloc(len);
+    if (path) {
+        snprintf(path, len, "%s/%s", base, filename);
+    }
+    return path;
 }
 
 FILE* CreateFile(const char* filename, bool overwrite) {  // works
@@ -52,10 +55,10 @@ MyFile* CreateMyFile(const char* filename, bool overwrite) {  // works
   size_t filenameLength = strlen(filename);
   if (filenameLength == 0) {
     printf(
-        "#CreateMyFile (FILE CREATION) Exception, the passed 'filename' is Empty "
+        "#CreateMyFile (FILE CREATION) Exception, the passed 'filename' is "
+        "Empty "
         "and "
-        "has a length of 0: %s\n",
-        filename);
+        "has a length of 0");
     exit(EXIT_FAILURE);
     return NULL;
   }
@@ -99,6 +102,31 @@ void AppendLine(const char* content, const char* path) {  // works
 
   fprintf(file, "%s", content);
   fclose(file);
+}
+
+char* ReadValue(const char* path, const char* key) {
+  FILE* file = fopen(path, "r");
+  if (!FileExists(path)) {
+    printf("'ReadValue from Key Exception': Error opening the file.\n");
+    exit(1);
+  }
+
+  char line[256];
+  char* value = NULL;
+  while (fgets(line, sizeof(line), file)) {
+    char* found = strstr(line, key);
+    if (found) {
+      found += strlen(key) + 1;  // Skip key and '='
+      size_t len = strlen(found);
+      if (found[len - 1] == '\n') found[len - 1] = '\0';  // Remove newline
+      value = malloc(len + 1);
+      if (value) strcpy(value, found);
+      break;
+    }
+  }
+
+  fclose(file);
+  return value;
 }
 
 char* ReadLine(int line, const char* path) {  // works

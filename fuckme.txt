@@ -1,3 +1,0 @@
-Hello world
-     This is 69!
-Testing appended line

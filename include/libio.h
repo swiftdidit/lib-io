@@ -11,7 +11,7 @@ typedef struct MyFile {
     char *finalPath;
 } MyFile;
 
-char *CreateMainPath(const char *path, const char* filename);
+char *CreateMainPath(const char *base, const char* filename);
 
 //Create a File
 FILE *CreateFile(const char *path, bool overwrite);
@@ -25,6 +25,8 @@ void WriteAll(const char *content, const char *path);
 //Writes a line to the file..
 void WriteLine(int line, const char *content, const char *path);
 void AppendLine(const char *content, const char *path);
+
+char *ReadValue(const char* path, const char *key);
 
 //Return a single line from file
 char *ReadLine(int line, const char *path);
