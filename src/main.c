@@ -38,7 +38,7 @@
 
 int main() {
   char *path =
-      CreateMainPath("C:\\Users\\fleek\\CProjects\\lib-io\\", "test.txt");
+      CreatePath("C:\\Users\\fleek\\CProjects\\lib-io\\", "test.txt");
   printf("Value from key 'test': %s\n", ReadValue(path, "test"));
 
   // printf("Main path: %s\n\n",

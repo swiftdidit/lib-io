@@ -11,7 +11,7 @@ typedef struct MyFile {
     char *finalPath;
 } MyFile;
 
-char *CreateMainPath(const char *base, const char* filename);
+char *CreatePath(const char *base, const char* filename);
 
 //Create a File
 FILE *CreateFile(const char *path, bool overwrite);

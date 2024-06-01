@@ -1,6 +1,6 @@
 #include "libio.h"
 
-char* CreateMainPath(const char* base, const char* filename) {
+char* CreatePath(const char* base, const char* filename) {
     size_t len = strlen(base) + strlen(filename) + 2;  // +1 for the separator, +1 for the null terminator
     char* path = malloc(len);
     if (path) {
@@ -161,32 +161,34 @@ char* ReadLine(int line, const char* path) {  // works
   return NULL;
 }
 
-char* ReadAll(const char* path) {  // todo: FIXME (will break, and is not
-                                   // recommended for production use cases yet)
-  FILE* file = fopen(path, "r");
+char* ReadAll(const char* path) {
+  FILE* file = fopen(path, "rb");
 
   if (!FileExists(path)) {
     printf("'READALL Exception': Error opening the file.\n");
     exit(1);
   }
 
-  char* content = 0;
-  long length;
+  fseek(file, 0, SEEK_END);
+  long length = ftell(file);
+  fseek(file, 0, SEEK_SET);
 
-  if (file) {
-    fseek(file, 0, SEEK_END);
-    length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    content = (char*)malloc((length + 1) * sizeof(char));
+  char* content = (char*)malloc((length + 1) * sizeof(char));
+  if (content == NULL) {
+    printf("'READALL Exception': Memory allocation failed.\n");
+    exit(1);
+  }
 
-    if (content) {
-      fread(content, sizeof(char), length, file);
-    }
-
-    fclose(file);
+  size_t readSize = fread(content, 1, length, file);
+  if (readSize != length) {
+    printf("'READALL Exception': Error reading the file.\n");
+    free(content);
+    exit(1);
   }
 
   content[length] = '\0';
+  fclose(file);
+
   return content;
 }
 
